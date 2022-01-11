@@ -6,9 +6,12 @@
 
   <ItemGroup>
     <Folder Include="Events\" />
-    <Folder Include="Models\" />
     <Folder Include="Repositories\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NbuyGetir.Core\NbuyGetir.Core.csproj" />
   </ItemGroup>
 
 </Project>
