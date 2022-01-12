@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NbuyGetir.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,23 @@ using System.Threading.Tasks;
 
 namespace NbuyGetir.API.Controllers
 {
+    public class ProductRequestDto
+    {
+        public string Name { get; set; }
+
+    }
+
+    public class ProductResponseDto
+    {
+        public bool Success { get; set; }
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        //private IApplicationService<ProductRequestDto, ProductResponseDto> service;
+
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -22,6 +36,17 @@ namespace NbuyGetir.API.Controllers
         {
             _logger = logger;
         }
+
+        //[HttpGet]
+        //public IActionResult Test()
+        //{
+        //    //var response =  service.HandleAsync(new ProductRequestDto());
+        //    //return Ok(response);
+
+        //    return Ok();
+        //}
+
+        // SOLID PRINCIPLES
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()

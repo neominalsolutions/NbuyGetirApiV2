@@ -37,9 +37,9 @@ namespace NbuyGetir.Core.Services
     ///  Frontend tarafından gelen bir istediğin işlenip frontend tarafına bir sonucun döndürülmesi için yaptık. Api de Input Model ve View Model yerine artık Dto (Data Transfer Object) terimini kullanacağız. Buradaki servisi Application katmanı için yazıyoruz.
     /// </summary>
     /// <typeparam name="TRequestDto"> Input Model</typeparam>
-    /// <typeparam name="TResultDto">ViewModel olarak kullanacağız </typeparam>
-    public interface IApplicationService<TRequestDto,TResultDto>
+    /// <typeparam name="TResponseDto">ViewModel olarak kullanacağız </typeparam>
+    public interface IApplicationService<TRequestDto,TResponseDto>
     {
-        Task<TResultDto> HandleAsync(TRequestDto dto);
+        Task<TResponseDto> HandleAsync(TRequestDto dto);
     }
 }

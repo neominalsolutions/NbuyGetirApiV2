@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NbuyGetir.Common\NbuyGetir.Common.csproj" />
     <ProjectReference Include="..\NbuyGetir.Core\NbuyGetir.Core.csproj" />
   </ItemGroup>
 

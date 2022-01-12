@@ -1,8 +1,10 @@
-﻿using NbuyGetir.Core.Entites;
+﻿using NbuyGetir.Common.Uri;
+using NbuyGetir.Core.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NBuyGetir.Domain.Models
@@ -17,7 +19,6 @@ namespace NBuyGetir.Domain.Models
         public decimal DiscountedListPrice { get; private set; } // indirimli fiyat
         public int Stock { get; set; } // current Stock
         public string Description { get; set; } // 10x1 adet 1lt 2kg 30cc 50ml
-        public string PictureBase64 { get; private set; }
         public string PictureUrl { get; set; }
 
         /// <summary>
@@ -29,13 +30,117 @@ namespace NBuyGetir.Domain.Models
             
             } }
 
-
-        public Product(string name, decimal unitPrice, decimal listPrice,int stock,string description, string pictureUrl)
+        /// <summary>
+        /// Stock kritik seviyede bunları ekranda göstermeyebiliriz.
+        /// </summary>
+        public bool IsStockInCriticalLevel
         {
+            get
+            {
+                return Stock < 10 ? true : false;
+            }
+        }
+
+
+        public Product(string name, decimal unitPrice, decimal listPrice,decimal discountedListPrice,int stock,string description, string pictureUrl)
+        {
+            SetName(name);
+            SetPrice(unitPrice, listPrice, discountedListPrice);
+            SetDescription(description);
+            SetStock(stock);
+            SetPictureUrl(pictureUrl);
+        }
+
+        /// <summary>
+        /// Hem kayıt hemde güncelleme işleminde kullanılacağı için public yapıldı.
+        /// Eğer boş ise default ürün'e ait bir url verelim.
+        /// </summary>
+        public void SetPictureUrl(string pictureUrl)
+        {
+         
+            if (!UrlHelper.IsUrl(pictureUrl))
+            {
+                throw new Exception("resim yolu url formatında değildir");
+            }
+
+            if (string.IsNullOrEmpty(pictureUrl))
+            {
+                PictureUrl = "default-product.jpeg";
+            }
+            else
+            {
+                PictureUrl = pictureUrl.Trim();
+            }
+           
+        }
+
+        /// <summary>
+        /// İlk kayıt işleminde sadece stok değeri formdan alınırken kullanılacağı için private yaptık. Diğer tüm stok işlemleride StockIn ve StockOut operasyonlarını kullanacağız.
+        /// </summary>
+        /// <param name="stock"></param>
+        private void SetStock(int stock)
+        {
+            if(stock < 0)
+            {
+                throw new Exception("Stok değeri sıfırdan küçük olamaz");
+            }
+
+            Stock = stock;
+        }
+
+        /// <summary>
+        /// Stoklama işlemi ürünün envantere girilmesi işlemi
+        /// </summary>
+        public void StockIn(int quantity)
+        {
+            if(quantity <= 0)
+            {
+                throw new Exception("stoğa girilecek yeni ürün adeti 0 ve daha düşük olamaz");
+            }
+
+            Stock+=quantity;
+            // Stoğa ürün girildi eventi fırlatalım
+        }
+
+        public void StockOut(int quantity)
+        {
+            if(quantity < 0)
+            {
+                throw new Exception("0 dan küçük değer stoktan düşülemez");
+            }
+       
+
+            if (IsStockInCriticalLevel)
+            {
+                // Kritik stok seviyesindeki bir ürün sipariş edildi diye bir mesaj atalım.
+            }
+
+            if(quantity > Stock)
+            {
+                // hatalı kayıt gönderme işlemi
+                throw new Exception("stoktan düşülen miktar stok değerinden büyük olamaz");
+            }
+
+            Stock -= quantity;
 
         }
 
-        private void SetName(string name)
+        public void SetDescription(string description)
+        {
+            if (string.IsNullOrEmpty(description))
+            {
+                throw new Exception("ürün açıklama alanı doldurdurunuz");
+            }
+
+            if(description.Length > 50)
+            {
+                throw new Exception("Maksimum 50 karakter girebilirsiniz");
+            }
+
+            Description = description.Trim();
+        }
+
+        public void SetName(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -45,20 +150,37 @@ namespace NBuyGetir.Domain.Models
             Name = name.Trim();
         }
 
-        private void SetPrice(decimal unitPrice, decimal listPrice)
+        /// <summary>
+        /// Ürüne ait fiyatların değişimini bu method ile yapacağız.
+        /// </summary>
+        /// <param name="unitPrice"></param>
+        /// <param name="listPrice"></param>
+        /// <param name="discountedListPrice"></param>
+        public void SetPrice(decimal unitPrice, decimal listPrice, decimal discountedListPrice)
         {
             if(unitPrice > listPrice)
             {
                 throw new Exception("Birim fiyat liste fiyatından büyük olamaz");
             }
 
-            if(unitPrice <= 0 || listPrice <= 0)
+            if(unitPrice <= 0 || listPrice <= 0 || discountedListPrice <= 0)
             {
-                throw new Exception("Ürün birim fiyatı veya ürün satış fiyatı negatif ve 0  verilemez");
+                throw new Exception("Ürün birim fiyatı veya ürün satış veya indirimli satış fiyatı 0 ve daha küçük bir değer olamaz");
+            }
+
+            if(discountedListPrice > listPrice)
+            {
+                throw new Exception("indirimli satış fiyatı satış fiyatından büyük olamaz");
+            }
+
+            if(discountedListPrice < unitPrice)
+            {
+                throw new Exception("indirimli satış fiyatı birim fiyattan küçük olamaz");
             }
 
             ListPrice = listPrice;
             UnitPrice = unitPrice;
+            DiscountedListPrice = discountedListPrice;
 
         }
 
