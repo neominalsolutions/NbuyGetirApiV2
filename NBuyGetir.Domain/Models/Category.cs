@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NBuyGetir.Domain.Models
 {
-    public class Category: Entity
+    public class Category: AuditableEntity
     {
         public string Name { get; private set; }
 
@@ -44,7 +44,7 @@ namespace NBuyGetir.Domain.Models
             }
 
             // dışarıdan üst seviye olan bir kategori başka kategorinin alt kategorisi olamaz.
-            if (category.IsTopLevel)
+            if (category.IsTopLevel) // eklenecek olan kategori
             {
                 throw new Exception("Top Level kategori başka bir kategori altına atılamaz");
             }
@@ -55,7 +55,7 @@ namespace NBuyGetir.Domain.Models
         public void AddProduct(Product product)
         {
             // !IsTopLevel && _subCategories.Count() == 0 en alt kategoridir.
-            // En üst seviye bir kategori değilse ve aynı zamanda kendi altında da bir kategori yoksa en alt kategoridir.
+            // En üst seviye bir kategori değilse ve aynı zamanda kendi altında da bir alt kategori yoksa en alt kategoridir.
             if (!IsTopLevel && _subCategories.Count() == 0)
             {
                 _products.Add(product);
