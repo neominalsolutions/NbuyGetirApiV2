@@ -16,4 +16,8 @@
     <Folder Include="Notification\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NbuyGetir.Core\NbuyGetir.Core.csproj" />
+  </ItemGroup>
+
 </Project>

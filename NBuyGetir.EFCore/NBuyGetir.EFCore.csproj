@@ -8,7 +8,10 @@
     <Folder Include="Migrations\" />
     <Folder Include="Contexts\" />
     <Folder Include="Configurations\" />
-    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NBuyGetir.Domain\NBuyGetir.Domain.csproj" />
   </ItemGroup>
 
 </Project>

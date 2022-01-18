@@ -8,10 +8,6 @@ namespace NbuyGetir.Core.Events
 {
     public interface IDomainEventDispatcher
     {
-        /// <summary>
-        /// IDomainEvent tipindeki tüm eventleri sevk et
-        /// </summary>
-        /// <param name="devent"></param>
-        void Dispatch(IDomainEvent devent);
+        Task DispatchAsync<T>(params T[] events) where T : IDomainEvent;
     }
 }

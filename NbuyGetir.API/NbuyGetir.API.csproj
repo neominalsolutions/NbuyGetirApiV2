@@ -10,6 +10,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NbuyGetir.Core\NbuyGetir.Core.csproj" />
+    <ProjectReference Include="..\NBuyGetir.Domain\NBuyGetir.Domain.csproj" />
+    <ProjectReference Include="..\NBuyGetir.EFCore\NBuyGetir.EFCore.csproj" />
+    <ProjectReference Include="..\NbuyGetir.Infrastructure\NbuyGetir.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

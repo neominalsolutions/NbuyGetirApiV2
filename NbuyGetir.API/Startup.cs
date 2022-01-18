@@ -7,6 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NbuyGetir.Core.Events;
+using NbuyGetir.Core.Services;
+using NbuyGetir.Infrastructure.Events.AspNetCoreDI;
+using NBuyGetir.Domain.Events;
+using NBuyGetir.Domain.Handlers;
+using NBuyGetir.Domain.Repositories;
+using NBuyGetir.Domain.Services;
+using NBuyGetir.EFCore.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +40,15 @@ namespace NbuyGetir.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NbuyGetir.API", Version = "v1" });
             });
+
+            
+            services.AddTransient<IDomainEventHandler<StockedIn> ,StockInHandler>();
+            services.AddSingleton<IDomainEventDispatcher, DotNetDomainEventDispatcher>();
+
+
+            services.AddTransient<IProductRepository, EfCoreProductRepository>();
+            services.AddTransient<StockInService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

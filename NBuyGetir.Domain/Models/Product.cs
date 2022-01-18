@@ -1,5 +1,6 @@
 ﻿using NbuyGetir.Common.Uri;
 using NbuyGetir.Core.Entites;
+using NBuyGetir.Domain.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,8 +99,12 @@ namespace NBuyGetir.Domain.Models
                 throw new Exception("stoğa girilecek yeni ürün adeti 0 ve daha düşük olamaz");
             }
 
-            Stock+=quantity;
+            int oldStock = Stock;
+            int newStock = Stock + quantity;
+            Stock = newStock;
             // Stoğa ürün girildi eventi fırlatalım
+
+            AddEvents(new StockedIn(this.Id, oldStock, newStock));
         }
 
         public void StockOut(int quantity)

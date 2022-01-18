@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NbuyGetir.Core.Services;
+using NBuyGetir.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,40 +26,23 @@ namespace NbuyGetir.API.Controllers
     {
         //private IApplicationService<ProductRequestDto, ProductResponseDto> service;
 
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private StockInService _stockInService;
 
-        private readonly ILogger<WeatherForecastController> _logger;
+       
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(StockInService stockInService)
         {
-            _logger = logger;
+            _stockInService = stockInService;
         }
 
-        //[HttpGet]
-        //public IActionResult Test()
-        //{
-        //    //var response =  service.HandleAsync(new ProductRequestDto());
-        //    //return Ok(response);
-
-        //    return Ok();
-        //}
-
-        // SOLID PRINCIPLES
+       
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IActionResult> GetAsync()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            await _stockInService.StockIn("1", 12);
+
+            return Ok();
         }
     }
 }
